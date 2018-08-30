@@ -71,6 +71,7 @@ import org.odata4j.core.OSimpleObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.temenos.interaction.core.UriInfoImpl;
 import com.temenos.interaction.core.command.InteractionContext;
 import com.temenos.interaction.core.entity.Entity;
 import com.temenos.interaction.core.entity.EntityMetadata;
@@ -630,6 +631,7 @@ public class HALProvider implements MessageBodyReader<RESTResource>, MessageBody
 			 */
 			PushbackInputStream wrappedStream = new PushbackInputStream(entityStream);
 			int firstByte = wrappedStream.read();
+			uriInfo = new UriInfoImpl(uriInfo);
 			if ( firstByte == -1 ) {
 					// No data provided
 					return null;

@@ -6,7 +6,7 @@
 		<groupId>com.temenos.interaction</groupId>
 		<artifactId>com.temenos.interaction.rimdsl.parent</artifactId>
 		<!-- You should change this and the MANIFEST.MF to your versioning scheme -->
-		<version>0.14.5</version>
+		<version>0.14.6</version>
 		<relativePath>../com.temenos.interaction.rimdsl.parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>com.temenos.interaction.rimdsl.generator</artifactId>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.temenos.interaction.rimdsl.sdk_0.14.5.jar" id="com.temenos.interaction.rimdsl.sdk" version="0.14.5">
+   <feature url="features/com.temenos.interaction.rimdsl.sdk_0.14.6.jar" id="com.temenos.interaction.rimdsl.sdk" version="0.14.6">
       <category name="IRIS_RIM_DSL"/>
    </feature>
    <category-def name="IRIS_RIM_DSL" label="IRIS Resource Interaction Model DSL">

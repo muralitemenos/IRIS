@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.temenos.interaction</groupId>
 		<artifactId>interaction-parent</artifactId>
-		<version>0.14.5</version>
+		<version>0.14.6</version>
 		<relativePath>../interaction-parent/pom.xml</relativePath>
 	</parent>
 
@@ -13,7 +13,7 @@
 	<name>interaction-sdk-test</name>
 
 	<properties>
-		<archetypeVersion>0.14.5</archetypeVersion>
+		<archetypeVersion>0.14.6</archetypeVersion>
 		<flightResponderVersion>1.0-SNAPSHOT</flightResponderVersion>
 		<insertFile>${basedir}/src/test/resources/responder_insert.sql</insertFile>
 	</properties>

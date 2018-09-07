@@ -27,7 +27,7 @@
 					<workflowDescriptor>src/com/temenos/interaction/rimdsl/GenerateRIMDsl.mwe2</workflowDescriptor>
 					<jvmSettings>
 						<jvmArgs>
-							<jvmArg>-Xmx4g</jvmArg>
+							<jvmArg>-Xmx6g</jvmArg>
 						</jvmArgs>
 					</jvmSettings>
 				</configuration>

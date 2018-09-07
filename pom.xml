@@ -4,7 +4,7 @@
 
 	<groupId>com.temenos.interaction</groupId>
 	<artifactId>interaction</artifactId>
-	<version>201807.0.0</version>
+	<version>201807.0.1</version>
 	<packaging>pom</packaging>
 
 	<name>IRIS</name>

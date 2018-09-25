@@ -206,7 +206,7 @@ public class TestDatabaseSystemResourceStateLoader {
         ResourceLoader resourceLoader = new DatabaseSystemResourceStateLoader();
         String filenamePRD1 = "/PRDFiles/IRIS-Tst_Twins_1494662578833-PRD.xml";
         InputStream testIsPRD1= TestDatabaseSystemResourceStateLoader.class.getResourceAsStream(filenamePRD1);
-        String filenamePRD2 = "/PRDFiles/IRIS-Tst_Twins_1494662578834-PRD.xml";
+        String filenamePRD2 = "/PRDFiles/IRIS-Tst_Twins_Foldername_10-PRD.xml";
         InputStream testIsPRD2= TestDatabaseSystemResourceStateLoader.class.getResourceAsStream(filenamePRD2);
         
         List<InputStream> inStreamList = new ArrayList<InputStream>();

@@ -98,6 +98,26 @@ public class TestLink {
     }
     
     @Test
+    public void testGetRelativeHrefHttp() throws Exception {
+        Link link = new Link(null, "ServiceDocumentToEntitySet", "rel",
+                "http://portal3.xlb2.lo/tapt24-iris/tapt24.svc/LU0010001/FundsTransfer_FtTaps()/new", null, null, "GET",
+                null);
+        String relativeHref = link.getRelativeHref("http://portal3.xlb2.lo:80/tapt24-iris/tapt24.svc/{companyid}");
+        assertEquals("FundsTransfer_FtTaps()/new", relativeHref);
+
+    }
+
+    @Test
+    public void testGetRelativeHrefHttps() throws Exception {
+        Link link = new Link(null, "ServiceDocumentToEntitySet", "rel",
+                "https://portal3.xlb2.lo/tapt24-iris/tapt24.svc/LU0010001/FundsTransfer_FtTaps()/new", null, null,
+                "GET", null);
+        String relativeHref = link.getRelativeHref("https://portal3.xlb2.lo:443/tapt24-iris/tapt24.svc/{companyid}");
+        assertEquals("FundsTransfer_FtTaps()/new", relativeHref);
+
+    }
+
+    @Test
     public void testGetRelativeHref1() throws Exception {
         Link link = new Link(null, "ServiceDocumentToEntitySet", "rel", 
                 "http://example.com/boo/moo",

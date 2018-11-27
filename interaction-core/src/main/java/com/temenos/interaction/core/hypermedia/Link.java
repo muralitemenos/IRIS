@@ -151,12 +151,15 @@ public class Link {
     }
     /**
      * Obtain the transition, i.e. the link relative to the REST service.
+     * {@link https://www.ietf.org/rfc/rfc1738.txt}
      * 
      * @param basePath  Path to REST service
      * @return relativePath of transition relative to REST service 
      */
     public String getRelativeHref(String basePath) {
-        String baseUri = HypermediaTemplateHelper.getTemplatedBaseUri(basePath, href);
+        // Trimming standard port number.
+        String baseUri = HypermediaTemplateHelper
+                .getTemplatedBaseUri(basePath.replaceFirst(":80/", "/").replaceFirst(":443/", "/"), href);
         StringBuffer regex = new StringBuffer("(?<=" + baseUri + ")\\S+");
         Pattern p = Pattern.compile(regex.toString());
         Matcher m = p.matcher(href);

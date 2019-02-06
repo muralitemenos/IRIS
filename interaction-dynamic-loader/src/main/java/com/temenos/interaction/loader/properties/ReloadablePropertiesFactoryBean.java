@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -51,7 +53,6 @@ import org.springframework.util.PropertiesPersister;
 import com.temenos.interaction.loader.xml.XmlChangedEventImpl;
 import com.temenos.interaction.loader.xml.resource.notification.XmlModificationNotifier;
 import com.temenos.interaction.springdsl.DynamicProperties;
-
 /**
  * A properties factory bean that creates a reconfigurable Properties object.
  * When the Properties' reloadConfiguration method is called, and the file has
@@ -71,7 +72,7 @@ public class ReloadablePropertiesFactoryBean extends PropertiesFactoryBean imple
 	private File lastChangeFile;
 	private XmlModificationNotifier xmlNotifier;
 	private String changeIndexLocations;
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReloadablePropertiesFactoryBean.class);
 	public void setListeners(List<ReloadablePropertiesListener<Resource>> listeners) {
 	    preListeners.addAll(listeners);
 	}
@@ -204,6 +205,15 @@ public class ReloadablePropertiesFactoryBean extends PropertiesFactoryBean imple
                          * Empty the file
                          */
                         fc.truncate(0);
+                    }catch (Exception exc) {
+                        LOGGER.error("Error.", exc);
+                    } finally {
+                        if (fcLock != null) {
+                            fcLock.close();
+                        }
+                        if (fc != null) {
+                            fc.close();
+                        }
                     }
                 }
             }

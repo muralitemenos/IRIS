@@ -68,10 +68,10 @@ public class AtomFeedFormatWriter extends XmlFormatWriter implements FormatWrite
 	  String entitySetName = ees.getName();
 	  List<Link> links = new ArrayList<Link>();
 	  links.add(new Link(entitySetName, "self", entitySetName, null, null));
-	  write(uriInfo, w, links, response, null, null);
+	  write(uriInfo, w, links, response, null, null, null);
   }
   
-  public void write(UriInfo uriInfo, Writer w, Collection<Link> links, EntitiesResponse response, String modelName, Map<OEntity, Collection<Link>> linkId) {
+  public void write(UriInfo uriInfo, Writer w, Collection<Link> links, EntitiesResponse response, String modelName, Map<OEntity, Collection<Link>> linkId,Map<String,String> hiddenColumnValue) {
 	String baseUri = AtomXMLProvider.getBaseUri(serviceDocument, uriInfo);
 	String absolutePath = AtomXMLProvider.getAbsolutePath(uriInfo);
 
@@ -105,6 +105,19 @@ public class AtomFeedFormatWriter extends XmlFormatWriter implements FormatWrite
     Integer inlineCount = response.getInlineCount();
     if (inlineCount != null) {
       writeElement(writer, "m:count", inlineCount.toString());
+    }
+    
+    if(hiddenColumnValue!=null){
+        if (!hiddenColumnValue.isEmpty()) {
+            writer.startElement("m:dynamicAttributes");
+            for (String key : hiddenColumnValue.keySet()) {
+                writer.startElement("m:dynamicAttribute");
+                writeElement(writer, "d:columnName", key);
+                writeElement(writer, "d:value", hiddenColumnValue.get(key));
+                writer.endElement("m:dynamicAttribute");
+            }
+            writer.endElement("m:dynamicAttributes");
+        }
     }
 
     for (OEntity entity : response.getEntities()) {

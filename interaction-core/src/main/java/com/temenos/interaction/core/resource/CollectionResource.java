@@ -23,6 +23,7 @@ package com.temenos.interaction.core.resource;
 
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.GenericEntity;
@@ -56,6 +57,8 @@ public class CollectionResource<T> implements RESTResource {
     private String entityTag = null;
 	@XmlTransient
 	private Integer inlineCount;
+	@XmlTransient
+    private Map<String,String> columnProperty = new HashMap<String,String>();
 	
 	public CollectionResource() {}
 
@@ -140,6 +143,32 @@ public class CollectionResource<T> implements RESTResource {
 	public void setEntityTag(String entityTag) {
 		this.entityTag = entityTag;
 	}
+	
+	   /*
+     * Sets the Value of the Dynamic Attribute to the collection resource
+     * */
+    public void setColumnValue(String token) {
+        if (token != null && !token.isEmpty()) {
+            String[] columnValue = token.split(" \\^ ");
+            if (columnValue.length > 1) {
+                String[] columnValuePairs = columnValue[1].toString().split("\\_");
+                if (columnValuePairs != null) {
+                    for (String columnValuePair : columnValuePairs) {
+                        String[] splitColumnValuePair = columnValuePair.split("=");
+                        String hiddenColumnName = splitColumnValuePair[0];
+                        String hiddenColumnValue = splitColumnValuePair[1];
+                        this.columnProperty.put(hiddenColumnName, hiddenColumnValue);
+
+                    }
+                }
+            }
+        }
+    }
+    
+    public Map<String,String> getHiddenColumnValue(){
+        return this.columnProperty;
+    }
+
 
 	/**
 	 * Sets the inline count value of the collection response.

@@ -263,10 +263,12 @@ public class AtomXMLProvider implements MessageBodyReader<RESTResource>, Message
             Integer inlineCount = collectionResource.getInlineCount();
             String skipToken = null;
             String queryToken = collectionResource.getQueryToken();
+            Map<String,String> hiddenColumnValue = new HashMap<String,String>();
+            hiddenColumnValue = collectionResource.getHiddenColumnValue();
             feedWriter.write(uriInfo, new OutputStreamWriter(buffer, UTF_8), 
                     processedLinks, 
                     Responses.entities(entities, entitySet, inlineCount, skipToken), 
-                    metadata.getModelName(), linkId, queryToken);
+                    metadata.getModelName(), linkId, queryToken,hiddenColumnValue);
         } else if(ResourceTypeHelper.isType(type, genericType, CollectionResource.class, Entity.class)) {
             CollectionResource<Entity> collectionResource = ((CollectionResource<Entity>) resource);
             

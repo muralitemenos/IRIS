@@ -23,6 +23,7 @@ package com.temenos.interaction.core.resource;
 
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.GenericEntity;
@@ -60,6 +61,10 @@ public class CollectionResource<T> implements RESTResource {
 	private String queryToken = null;
 	@XmlTransient
 	private String skipToken = null;
+	@XmlTransient
+    private Map<String,String> columnProperty = new HashMap<String,String>();
+    @XmlTransient
+    private String tokenValue = null;
 	
 	public CollectionResource() {}
 
@@ -165,10 +170,13 @@ public class CollectionResource<T> implements RESTResource {
 	}
 	/* it have been considered the second position will be the skip token value */
     public void setSkipToken(String token) {
-        if(token != null && !token.isEmpty()){
-            String[] skipToken = token.split(" & ");
-            if(skipToken.length > 1){
-                this.skipToken = skipToken[1];
+        if (token != null && !token.isEmpty()) {
+            String tokenvalue = setSkipAndQueryTokenValue(token);
+            if (tokenvalue != null && !tokenvalue.isEmpty()) {
+                String[] skipToken = tokenvalue.split(" & ");
+                if (skipToken.length > 1) {
+                    this.skipToken = skipToken[1];
+                }
             }
         }
     }
@@ -176,17 +184,53 @@ public class CollectionResource<T> implements RESTResource {
     public String getSkipToken() {
         return this.skipToken;
     }
+    
+    /*this splits up the skiptoken and query token*/
+    public String setSkipAndQueryTokenValue(String token) {
+        if (token != null && !token.isEmpty()) {
+            String[] skipAndQueryTokenValue = token.split(" \\^ ");
+            if (skipAndQueryTokenValue.length > 0) {
+                return this.tokenValue = skipAndQueryTokenValue[0];
+            }
+        }
+        return null;
+    }
+
+     /*it set the column values as a map for the dynamic attributes sent*/
+    public void setColumnValue(String token) {
+        if (token != null && !token.isEmpty()) {
+            String[] columnValue = token.split(" \\^ ");
+            if (columnValue.length > 1) {
+                String[] columnValuePairs = columnValue[1].toString().split("\\_");
+                if (columnValuePairs != null) {
+                    for (String columnValuePair : columnValuePairs) {
+                        String[] splitColumnValuePair = columnValuePair.split("=");
+                        String hiddenColumnName = splitColumnValuePair[0];
+                        String hiddenColumnValue = splitColumnValuePair[1];
+                        this.columnProperty.put(hiddenColumnName, hiddenColumnValue);
+
+                     }
+                }
+            }
+        }
+    }
+
+     public Map<String,String> getHiddenColumnValue(){
+        return this.columnProperty;
+    }
 
     /* it have been considered the first position will be the query token value */
-	public void setQueryToken(String token) {
-	    if(token != null && !token.isEmpty()){
-            String[] queryToken = token.split(" & ");
-            if(queryToken.length > 0){
-                this.queryToken = queryToken[0];
-            }
-	    }
-	}
-
+     public void setQueryToken(String token) {
+         if (token != null && !token.isEmpty()) {
+             String tokenvalue = setSkipAndQueryTokenValue(token);
+             if (tokenvalue != null && !tokenvalue.isEmpty()) {
+                 String[] queryToken = tokenvalue.split(" & ");
+                 if (queryToken.length > 0) {
+                     this.queryToken = queryToken[0];
+                 }
+             }
+         }
+     }
 	public String getQueryToken() {
 	    return this.queryToken;
 	}

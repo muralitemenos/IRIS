@@ -74,6 +74,7 @@ public class GETEntitiesCommand extends AbstractODataCommand implements Interact
 			    
 			CollectionResource<OEntity> cr = CommandHelper.createCollectionResource(entitySetName, response.getEntities());
 			cr.setInlineCount(response.getInlineCount());
+			cr.setColumnValue(response.getSkipToken());
 			cr.setQueryToken(response.getSkipToken());
 			cr.setSkipToken(response.getSkipToken());
 			ctx.setResource(cr);

@@ -1079,6 +1079,16 @@ public class TestAtomXMLProvider {
 			+ "<id>http://localhost:8080/responder/rest/FundsTransfers</id>"
 			+ "<updated>2014-02-20T08:56:32Z</updated>"
 			+ "<m:count>30</m:count>"
+			+ "<m:dynamicAttributes>"
+            + "<m:dynamicAttribute>"
+            + "<d:columnName>CURRENCY</d:columnName>"
+            + "<d:value>HIDDEN</d:value>"
+            + "</m:dynamicAttribute>"
+            + "<m:dynamicAttribute>"
+            + "<d:columnName>PRODUCT.CATEGORY</d:columnName>"
+            + "<d:value>HIDDEN</d:value>"
+            + "</m:dynamicAttribute>"
+            + "</m:dynamicAttributes>"
 				+ "<entry m:etag=\"07u1PAxpJ7RGGblAB8FicpJF18wtzngF71WGQUMlABE=\"><id>http://localhost:8080/responder/rest/Flight('1')</id>"
 				+ "<title type=\"text\" />"
 				+ "<updated>2014-02-20T08:56:32Z</updated>"
@@ -1195,6 +1205,7 @@ public class TestAtomXMLProvider {
 		// Create collection resource
 		CollectionResource<OEntity> cr = new CollectionResource<OEntity>("Flights", oentities);
 		cr.setInlineCount(30);
+		cr.setColumnValue("f8ace46a-60c1-4a81-ab31-7a115ee1ccf8 ^ CURRENCY=HIDDEN_PRODUCT.CATEGORY=HIDDEN_");
 		GenericEntity<CollectionResource<OEntity>> ge = new GenericEntity<CollectionResource<OEntity>>(cr) {};
 
 		//Create provider

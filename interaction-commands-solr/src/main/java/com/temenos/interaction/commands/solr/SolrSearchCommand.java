@@ -287,29 +287,51 @@ public class SolrSearchCommand extends AbstractSolrCommand implements Interactio
 
 					switch (filter.getRelation()) {
 					case EQ:
-						query.addFilterQuery(filter.getFieldName().getName() + ":\"" + filter.getValue() + "\"");
+					    if(filter.getValue().contains("...")){
+                            /* Special case - forming filter query for LK operand
+                             * ex1 - '...xxx...' -> *xxx*
+                             * ex2 - 'xxx...' -> xxx*
+                             * ex3 - '...xxx' -> *xxx
+                             */
+                            String filterQuery = getFilterQueryForLK(filter);
+                            if (filterQuery != null) {
+                                query.addFilterQuery(filterQuery);
+                            }
+                        }else{
+                            /* Removing quotes from filter value, if exist and solr understand the field name and value using ":". so replacing ":" to "\:"
+                             * ex - '2019-02-13T05:21:56Z' -> 2019-02-13T05\:21\:56Z
+                             */
+                        query.addFilterQuery(filter.getFieldName().getName() + ":\"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\"");
+                        }
 						break;
 
 					case NE:
-						query.addFilterQuery("-" + filter.getFieldName().getName() + ":\"" + filter.getValue() + "\"");
+					    if(filter.getValue().contains("...")){
+                            String filterQuery = getFilterQueryForUL(filter);
+                            if (filterQuery != null) {
+                                query.addFilterQuery(filterQuery);
+                            }
+                        }else{
+                        query.addFilterQuery("-" + filter.getFieldName().getName() + ":\"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\"");
+                        }
 						break;
 
 					case LT:
 						// fq comparisons uses 'inclusive' [x TO y] syntax. To get an 'exclusive' lt use 'not gt'.
-						query.addFilterQuery("-" + filter.getFieldName().getName() + ":[\"" + filter.getValue() + "\" TO *]");
+					    query.addFilterQuery(filter.getFieldName().getName() + ":{* TO \"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\"}");
 						break;
 
 					case GT:
 						// fq comparisons uses 'inclusive' [x TO y] syntax. To get an 'exclusive' gt use 'not lt'.
-						query.addFilterQuery("-" + filter.getFieldName().getName() + ":[* TO \"" + filter.getValue() + "\"]");
+					    query.addFilterQuery(filter.getFieldName().getName() + ":{\"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\" TO *}");
 						break;
 						
 					case LE:
-						query.addFilterQuery(filter.getFieldName().getName() + ":[* TO \"" + filter.getValue() + "\"]");
+					    query.addFilterQuery(filter.getFieldName().getName() + ":[* TO \"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\"]");
 						break;
 
 					case GE:
-						query.addFilterQuery(filter.getFieldName().getName() + ":[\"" + filter.getValue() + "\" TO *]");
+					    query.addFilterQuery(filter.getFieldName().getName() + ":[\"" + filter.getValue().replace("'", "").replace(":", "\\:") + "\" TO *]");
 						break;
 
 					default:
@@ -324,6 +346,70 @@ public class SolrSearchCommand extends AbstractSolrCommand implements Interactio
 		}
 		return;
 	}
+	
+	/**
+     * @param filter
+     * @return
+     */
+    private String getFilterQueryForUL(RowFilter filter) {
+        String filterQuery = null;
+        String filterValue = filter.getValue();
+        if (filterValue.startsWith("'...") && filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for UL with contains. 
+             * Ex - Mnemonic ul ...xxx... converted in to !Mnemonic:*xxx*
+             */
+            filterValue = filterValue.substring(filterValue.indexOf(".") + 3, filterValue.lastIndexOf(".") - 2).trim();
+            filterQuery = "!" + filter.getFieldName().getName() + ":*" + filterValue + "*";
+        } else if (!filterValue.startsWith("'...") && filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for UL with startswith. 
+             * Ex - Mnemonic ul xxx... converted in to !Mnemonic:xxx*
+             */
+            filterValue = filterValue.substring(filterValue.indexOf("'") + 1, filterValue.indexOf(".")).trim();
+            filterQuery = "!" + filter.getFieldName().getName() + ":" + filterValue + "*";
+        } else if (filterValue.startsWith("'...") && !filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for UL with endswith. 
+             * Ex - Mnemonic ul ...xxx converted in to !Mnemonic:*xxx
+             */
+            filterValue = filterValue.substring(filterValue.indexOf(".") + 3, filterValue.lastIndexOf("'")).trim();
+            filterQuery = "!" + filter.getFieldName().getName() + ":*" + filterValue;
+        }
+        return filterQuery;
+    }
+
+     /**
+     * @param filter
+     * @return
+     */
+    private String getFilterQueryForLK(RowFilter filter) {
+        String filterQuery = null;
+        String filterValue = filter.getValue();
+        if (filterValue.startsWith("'...") && filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for LK with contains. 
+             * Ex - Mnemonic lk ...xxx... converted in to Mnemonic:*xxx*
+             */ 
+            filterValue = filterValue.substring(filterValue.indexOf(".") + 3, filterValue.lastIndexOf(".") - 2).trim();
+            filterQuery = filter.getFieldName().getName() + ":*" + filterValue + "*";
+        } else if (!filterValue.startsWith("'...") && filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for LK with startswith. 
+             * Ex - Mnemonic lk xxx... converted in to Mnemonic:xxx*
+             */
+            filterValue = filterValue.substring(filterValue.indexOf("'") + 1,filterValue.indexOf(".")).trim();
+            filterQuery = filter.getFieldName().getName() + ":" + filterValue + "*";
+        } else if (filterValue.startsWith("'...") && !filterValue.endsWith("...'")) {
+            /*
+             * Forming solr equivalent filter for LK with endswith. 
+             * Ex - Mnemonic lk ...xxx converted in to Mnemonic:*xxx
+             */
+            filterValue = filterValue.substring(filterValue.indexOf(".") + 3, filterValue.lastIndexOf("'")).trim();
+            filterQuery = filter.getFieldName().getName() + ":*" + filterValue;
+        }
+        return filterQuery;
+    }
 	
 	@Override
 	protected void customizeEntityProperties(SolrDocument doc, EntityProperties properties) {
